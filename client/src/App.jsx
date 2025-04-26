@@ -2,20 +2,29 @@ import '@carbon/styles/css/styles.css'; // Correct path for Carbon Design System
 import { Button, Search, Tabs, TabList, Tab } from '@carbon/react';
 import React, { useState } from 'react';
 import './App.css';
+import axios from 'axios';
 
 function App() {
   const [searchQuery, setSearchQuery] = useState("");
 
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
     console.log("Search query:", searchQuery);
+
+    try {
+      // Send the search query to the backend
+      const response = await axios.get(`http://localhost:3000/api/search?q=${searchQuery}`);
+      console.log(response.data.message); // Log the backend response
+    } catch (error) {
+      console.error("Error sending search query to backend:", error);
+    }
   };
 
   return (
     <div style={{
       position: 'relative',
       width: '100%',
-      height: '87.5vh', // Scale the picture to leave 1/8 of the screen's size as padding on the bottom
+      height: '87.5vh',
       backgroundImage: 'url(./src/assets/istockphoto-112156275-612x612.jpg)',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
@@ -26,13 +35,13 @@ function App() {
         left: 0,
         width: '100%',
         height: '100%',
-        backgroundColor: 'rgba(255, 255, 255, 0.5)', // Semi-transparent overlay
-        pointerEvents: 'none', // Ensure the overlay does not block interactions
+        backgroundColor: 'rgba(255, 255, 255, 0.5)',
+        pointerEvents: 'none',
       }}></div>
       <div className="app" style={{
         position: 'relative',
-        zIndex: 1, // Ensure content is above the overlay
-        backgroundColor: 'transparent', // Keep the app background transparent
+        zIndex: 1,
+        backgroundColor: 'transparent',
         color: 'var(--color-black)',
         overflow: 'hidden',
         height: '100vh',
@@ -41,8 +50,8 @@ function App() {
       }}>
         {/* Top Bar */}
         <div style={{
-          backgroundColor: 'var(--color-black)', // Set top bar to solid black color
-          color: 'var(--color-light-gray)', // Adjust text color for contrast
+          backgroundColor: 'var(--color-black)',
+          color: 'var(--color-light-gray)',
           padding: '1rem',
           display: 'flex',
           justifyContent: 'space-between',
@@ -53,14 +62,14 @@ function App() {
           boxSizing: 'border-box',
         }}>
           <h2 style={{ margin: 0 }}>Aurelytics</h2>
-          <div style={{ marginLeft: 'auto', marginRight: '1rem' }}> {/* Adjusted margin to move tabs slightly left */}
+          <div style={{ marginLeft: 'auto', marginRight: '1rem' }}>
             <Tabs>
               <TabList aria-label="Navigation" style={{
                 fontWeight: 'bold',
                 display: 'flex',
                 gap: '1rem',
-                marginLeft: '0', // Removed negative margin to prevent overlap
-                alignItems: 'center', // Ensures proper alignment
+                marginLeft: '0',
+                alignItems: 'center',
               }}>
                 <Tab style={{ 
                   color: 'var(--color-gold)', 
@@ -69,7 +78,7 @@ function App() {
                   borderBottom: '2px solid var(--color-gold)', 
                   flex: 'none', 
                   padding: '0.5rem 1rem', 
-                  marginLeft: '0' // Ensure no left margin misalignment
+                  marginLeft: '0' 
                 }}>Popular</Tab>
                 <Tab style={{ 
                   color: 'var(--color-gold)', 
@@ -78,7 +87,7 @@ function App() {
                   borderBottom: '2px solid var(--color-gold)', 
                   flex: 'none', 
                   padding: '0.5rem 1rem', 
-                  marginLeft: '0' // Ensure no left margin misalignment
+                  marginLeft: '0' 
                 }}>Trending</Tab>
               </TabList>
             </Tabs>
@@ -87,25 +96,25 @@ function App() {
 
         {/* Main Content */}
         <main className="main" style={{
-          marginTop: '50vh', // Push the main content to the bottom half of the screen
+          marginTop: '50vh',
         }}>
           {/* Search */}
           <section className="search-section" style={{
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            justifyContent: 'flex-start', // Align content to the top
-            height: '33vh', // Position the section in the top third of the screen
-            marginTop: '-20vh', // Move it further up to align with the top third line
+            justifyContent: 'flex-start',
+            height: '33vh',
+            marginTop: '-20vh',
           }}>
             <h1 style={{
-              marginBottom: '2rem', // Add more space below the title
+              marginBottom: '2rem',
             }}>Discover Internet Trends</h1>
             <form onSubmit={handleSearch} className="search-form" style={{
               display: 'flex',
-              alignItems: 'stretch', // Ensure both the search bar and button have the same height
+              alignItems: 'stretch',
               justifyContent: 'center',
-              gap: '1rem', // Spacing between the input and button
+              gap: '1rem',
               width: '100%',
               maxWidth: '900px',
             }}>
@@ -119,7 +128,7 @@ function App() {
                 className="custom-search"
               />
               <button type="submit" style={{
-                padding: '1rem 2rem', // Increased padding for a wider button
+                padding: '1rem 2rem',
                 fontSize: '1rem',
                 backgroundColor: 'var(--color-gold)',
                 color: 'var(--color-black)',
