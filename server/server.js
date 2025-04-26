@@ -1,13 +1,20 @@
 const express = require('express');
-const cors = require('cors');
 const app = express();
+const port = 3000;
 
-app.use(cors());
+// Middleware to parse JSON requests
 app.use(express.json());
 
-app.listen(3001, () => console.log("Server running on port 3001"));
+// Route to handle search queries
+app.get('/api/search', (req, res) => {
+    const query = req.query.q; // Extract the search query from the request
+    console.log(`Received search query: ${query}`);
 
-app.get('/api/hello', (req, res) => {
-    res.json({ message: "Hello from the backend!" });
-  });
-  
+    // For now, just send a placeholder response
+    res.json({ message: `Search query received: ${query}` });
+});
+
+// Start the server
+app.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`);
+});
