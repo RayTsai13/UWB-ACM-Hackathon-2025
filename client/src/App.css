@@ -99,3 +99,21 @@ html, body, #root {
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   text-align: center;
 }
+
+/* Custom styles for the search bar */
+.custom-search .cds--text-input {
+  border-color: var(--color-gold); /* Set border to gold */
+}
+
+.custom-search .cds--text-input:focus {
+  border-color: var(--color-gold); /* Set focus border to gold */
+  box-shadow: 0 0 0 2px var(--color-gold); /* Add gold focus ring */
+}
+
+.custom-search .cds--text-input:active {
+  border-color: var(--color-gold); /* Set active border to gold */
+}
+
+.custom-search .cds--label {
+  color: var(--color-gold); /* Set label color to gold */
+}
