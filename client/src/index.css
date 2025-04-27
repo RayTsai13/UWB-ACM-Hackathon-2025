@@ -1,3 +1,12 @@
+html, body, #root {
+  width: 100%;
+  min-height: 100vh; /* Changed from height to min-height */
+  margin: 0;
+  padding: 0;
+  background: none; /* Ensure no background color conflicts */
+  position: relative; /* Ensure proper stacking context */
+}
+
 :root {
   --color-dark-purple: #160C28; /* Accent color */
   --color-gold: #EFCB68; /* Secondary accent color */
@@ -7,11 +16,11 @@
 }
 
 body {
-  background-color: var(--color-light-gray);
-  color: var(--color-black);
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
+  background-image: url('./src/assets/istockphoto-112156275-612x612.jpg');
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--color-light-gray); /* Fallback color */
 }
 
 button {
