@@ -1,10 +1,16 @@
 import '@carbon/styles/css/styles.css'; // Correct path for Carbon Design System styles
 import { Button, Search, Tabs, TabList, Tab, Tile } from '@carbon/react';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link, useNavigate } from 'react-router-dom';
 import './App.css';
 import axios from 'axios';
 import TemplatePage from './TemplatePage';
+import ALSIceBucketPage from './ALSIceBucketPage';
+import BlackoutTuesdayPage from './BlackoutTuesdayPage';
+import StopAsianHatePage from './StopAsianHatePage';
+import MeTooPage from './MeTooPage';
+import FridaysForFuturePage from './FridaysForFuturePage';
+import BlackLivesMatterPage from './BlackLivesMatterPage';
 
 // Add floating animation styles
 const floatingAnimation = {
@@ -18,24 +24,72 @@ const floatingAnimation = {
 
 function HomePage() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
-    console.log("Search query:", searchQuery);
-
-    if (searchQuery.toLowerCase() === "blah") {
-      navigate("/popular");
-      return;
+  const trends = [
+    {
+      title: "ALS Ice Bucket Challenge",
+      path: "/als-ice-bucket",
+      image: "./src/assets/ALS 3.jpg.webp"
+    },
+    {
+      title: "#BlackoutTuesday",
+      path: "/blackout-tuesday",
+      image: "./src/assets/Blackout Tuesday 3.webp"
+    },
+    {
+      title: "#StopAsianHate",
+      path: "/stop-asian-hate",
+      image: "./src/assets/Stop Asian Hate 2.jpg"
+    },
+    {
+      title: "#MeToo Movement",
+      path: "/metoo",
+      image: ""
+    },
+    {
+      title: "Fridays for Future",
+      path: "/fridays-for-future",
+      image: ""
+    },
+    {
+      title: "Black Lives Matter",
+      path: "/black-lives-matter",
+      image: ""
     }
+  ];
 
-    try {
-      const response = await axios.get(`http://localhost:3000/api/search?q=${searchQuery}`);
-      console.log(response.data.message);
-    } catch (error) {
-      console.error("Error sending search query to backend:", error);
-    }
+  // Filtered trends for display cards (only show the original three)
+  const displayTrends = trends.slice(0, 3);
+
+  const filteredTrends = trends.filter(trend => 
+    trend.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+    setShowDropdown(true);
   };
+
+  const handleTrendClick = (path) => {
+    navigate(path);
+    setShowDropdown(false);
+    setSearchQuery("");
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest('.search-container')) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
     <div>
@@ -53,7 +107,7 @@ function HomePage() {
           left: 0,
           width: '100%',
           height: '100%',
-          backgroundColor: 'rgba(255, 255, 255, 0.5)',
+          backgroundColor: 'rgba(255, 255, 255, 0.7)',
           pointerEvents: 'none',
         }}></div>
         <div className="app" style={{
@@ -62,7 +116,7 @@ function HomePage() {
           backgroundColor: 'transparent',
           color: 'var(--color-black)',
           overflow: 'hidden',
-          height: '100vh',
+          height: '100%',
           display: 'flex',
           flexDirection: 'column',
         }}>
@@ -101,20 +155,6 @@ function HomePage() {
                 </TabList>
               </Tabs>
             </div>
-            <Link to="/popular">
-              <Button style={{
-                backgroundColor: 'var(--color-gold)',
-                color: 'var(--color-black)',
-                fontWeight: 'bold',
-                marginLeft: '1rem',
-                marginRight: '2rem',
-                textAlign: 'center',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '0.5rem 1rem',
-              }}>Popular</Button>
-            </Link>
           </div>
 
           {/* Main Content */}
@@ -135,11 +175,8 @@ function HomePage() {
                 fontWeight: 'bold',
                 fontSize: '3rem',
               }}>Discover Internet Trends</h1>
-              <form onSubmit={handleSearch} className="search-form" style={{
-                display: 'flex',
-                alignItems: 'stretch',
-                justifyContent: 'center',
-                gap: '1rem',
+              <div className="search-container" style={{
+                position: 'relative',
                 width: '100%',
                 maxWidth: '900px',
               }}>
@@ -148,20 +185,64 @@ function HomePage() {
                   labelText="Search for trends..."
                   placeholder="Search for trends..."
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={handleSearch}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && filteredTrends.length > 0) {
+                      handleTrendClick(filteredTrends[0].path);
+                    }
+                  }}
                   size="lg"
                   className="custom-search"
                 />
-                <button type="submit" style={{
-                  padding: '1rem 2rem',
-                  fontSize: '1rem',
-                  backgroundColor: 'var(--color-gold)',
-                  color: 'var(--color-black)',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                }}>Search</button>
-              </form>
+                {showDropdown && searchQuery && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '100%',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: '100%',
+                    maxWidth: '900px',
+                    backgroundColor: 'white',
+                    borderRadius: '8px',
+                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                    zIndex: 1000,
+                    marginTop: '0.5rem',
+                  }}>
+                    {filteredTrends.map((trend, index) => (
+                      <div
+                        key={index}
+                        onClick={() => handleTrendClick(trend.path)}
+                        style={{
+                          padding: '1rem',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '1rem',
+                          borderBottom: index < filteredTrends.length - 1 ? '1px solid #e0e0e0' : 'none',
+                        }}
+                      >
+                        <div style={{
+                          width: '50px',
+                          height: '50px',
+                          borderRadius: '4px',
+                          overflow: 'hidden',
+                        }}>
+                          <img
+                            src={trend.image}
+                            alt={trend.title}
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover',
+                            }}
+                          />
+                        </div>
+                        <span style={{ color: 'var(--color-black)' }}>{trend.title}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </section>
           </main>
         </div>
@@ -179,33 +260,43 @@ function HomePage() {
         margin: '0 auto',
         backgroundColor: 'transparent',
       }}>
-        {[1, 2, 3].map((index) => (
-          <Tile key={index} className="trend-card" style={{
-            width: '300px',
-            height: '400px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            padding: '1rem',
-            flex: '0 0 auto',
-          }}>
-            <h3 style={{ marginBottom: '1rem' }}>Trend {index}</h3>
-            <div style={{
-              width: '100%',
-              height: '300px',
-              backgroundColor: '#f4f4f4',
+        {displayTrends.map((trend, index) => (
+          <Link key={index} to={trend.path} style={{ textDecoration: 'none', color: 'var(--color-black)' }}>
+            <Tile className="trend-card" style={{
+              width: '300px',
+              height: '400px',
               display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
-              justifyContent: 'center',
+              padding: '1rem',
+              flex: '0 0 auto',
             }}>
-              <span>Image Placeholder</span>
-            </div>
-          </Tile>
+              <h3 style={{ marginBottom: '1rem', color: 'var(--color-black)' }}>{trend.title}</h3>
+              <div style={{
+                width: '100%',
+                height: '300px',
+                backgroundColor: '#f4f4f4',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden',
+                borderRadius: '4px'
+              }}>
+                <img 
+                  src={trend.image}
+                  alt={trend.title}
+                  style={{ 
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    borderRadius: '4px'
+                  }}
+                />
+              </div>
+            </Tile>
+          </Link>
         ))}
       </section>
-
-      {/* Add extra space at the bottom of the webpage to allow scrolling */}
-      <div style={{ height: '66.67vh' }}></div>
     </div>
   );
 }
@@ -216,6 +307,12 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/popular" element={<TemplatePage />} />
+        <Route path="/als-ice-bucket" element={<ALSIceBucketPage />} />
+        <Route path="/blackout-tuesday" element={<BlackoutTuesdayPage />} />
+        <Route path="/stop-asian-hate" element={<StopAsianHatePage />} />
+        <Route path="/metoo" element={<MeTooPage />} />
+        <Route path="/fridays-for-future" element={<FridaysForFuturePage />} />
+        <Route path="/black-lives-matter" element={<BlackLivesMatterPage />} />
       </Routes>
     </Router>
   );
